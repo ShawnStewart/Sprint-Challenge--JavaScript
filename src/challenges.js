@@ -37,11 +37,11 @@ const limitFunctionCallCount = (cb, n) => {
   // The returned function should only allow `cb` to be invoked `n` times.
   let x = 0;
   return (...variable) => {
-    if (n > x) {
-      x++;
-      return cb(...variable);
+    if (x === n) {
+      return null;
     }
-    return null;
+    x += 1;
+    return cb(...variable);
   };
 };
 
@@ -175,6 +175,21 @@ class Cube extends CuboidMaker {
 const checkMatchingLeaves = obj => {
   // return true if every property on `obj` is the same
   // otherwise return false
+  let temp;
+  let match = true;
+
+  const checkLeaves = object => {
+    const keys = Object.keys(object);
+
+    for (let i = 0; i < keys.length; i++) {
+      if (typeof object[keys[i]] === "object") checkLeaves(object[keys[i]]);
+      else if (temp === undefined) temp = object[keys[i]];
+      else if (temp !== object[keys[i]]) match = false;
+    }
+  };
+
+  checkLeaves(obj);
+  return match;
 };
 
 module.exports = {
